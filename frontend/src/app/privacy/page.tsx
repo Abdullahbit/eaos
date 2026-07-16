@@ -16,7 +16,7 @@ export default function PrivacyPolicy() {
       </header>
 
       <div className="container" style={styles.container}>
-        <div className="glass-card" style={styles.contentCard} className="animate-fade-in glass-card">
+        <div className="glass-card animate-fade-in" style={styles.contentCard}>
           <span style={styles.badge}>Compliance</span>
           <h1 style={styles.title}>Privacy Policy</h1>
           <p style={styles.version}>Version 1.0 (Effective July 2026)</p>

@@ -79,7 +79,7 @@ export default function AdminLeads() {
     return (
       <main style={styles.main}>
         <div className="container" style={styles.loginContainer}>
-          <div className="glass-card" style={styles.loginCard} className="animate-fade-in glass-card">
+          <div className="glass-card animate-fade-in" style={styles.loginCard}>
             <h1 style={styles.loginTitle}>Admin Portal</h1>
             <p style={styles.loginSubtitle}>Provide your admin token to view recent lead entries.</p>
             {errorMsg && <div style={styles.errorBanner}>{errorMsg}</div>}

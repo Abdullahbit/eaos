@@ -8,6 +8,7 @@ from app.db.repositories.search import ProgramSearchRepository
 from app.db.session import get_db
 from app.models.lead import Lead
 from app.models.analytics import AnalyticsEvent
+from app.models.sync_run import SyncRun
 from app.core.security import rate_limiter, normalize_phone_number, verify_turnstile_token
 from app.services.notification import get_notification_service
 from app.core.config import settings
@@ -222,4 +223,31 @@ def list_recent_leads(
 
     leads = db.query(Lead).order_by(Lead.created_at.desc()).limit(100).all()
     return leads
+
+
+@router.get("/sync/status")
+def get_sync_status(db: Session = Depends(get_db)):
+    """
+    Returns the latest successful sync run timestamp and whether a sync run is currently active.
+    """
+    # Check if a sync is running
+    is_syncing = db.query(SyncRun).filter(SyncRun.status == "running").first() is not None
+
+    # Get the latest successful sync run
+    latest_success = (
+        db.query(SyncRun)
+        .filter(SyncRun.status.in_(["success", "dry_run"]))
+        .order_by(SyncRun.finished_at.desc())
+        .first()
+    )
+
+    latest_sync_time = None
+    if latest_success and latest_success.finished_at:
+        latest_sync_time = latest_success.finished_at.isoformat()
+
+    return {
+        "is_syncing": is_syncing,
+        "latest_sync_time": latest_sync_time,
+    }
+
 

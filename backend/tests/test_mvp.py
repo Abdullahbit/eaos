@@ -482,3 +482,50 @@ def test_rate_limiting_trigger(client: TestClient):
     assert res.status_code == 429
     assert "Too many requests" in res.json()["detail"]
 
+
+def test_sync_status_endpoint(client: TestClient, db_session: Session):
+    """
+    Verifies that the /api/sync/status endpoint correctly returns the latest successful
+    sync run time and active syncing status.
+    """
+    from app.models.sync_run import SyncRun
+    from datetime import datetime, UTC
+
+    # Clear sync runs
+    db_session.query(SyncRun).delete()
+    db_session.commit()
+
+    # 1. Initially no sync run exists
+    res = client.get("/api/sync/status")
+    assert res.status_code == 200
+    data = res.json()
+    assert data["is_syncing"] is False
+    assert data["latest_sync_time"] is None
+
+    # 2. Add a running sync run
+    run1 = SyncRun(entity_type="program", started_at=datetime.now(UTC), status="running")
+    db_session.add(run1)
+    db_session.commit()
+
+    res = client.get("/api/sync/status")
+    assert res.json()["is_syncing"] is True
+    assert res.json()["latest_sync_time"] is None
+
+    # 3. Add a completed successful sync run
+    run2 = SyncRun(
+        entity_type="program",
+        started_at=datetime.now(UTC),
+        finished_at=datetime.now(UTC),
+        status="success"
+    )
+    db_session.add(run2)
+    # Set run1 status to completed as well
+    run1.status = "success"
+    run1.finished_at = datetime.now(UTC)
+    db_session.commit()
+
+    res = client.get("/api/sync/status")
+    assert res.json()["is_syncing"] is False
+    assert res.json()["latest_sync_time"] is not None
+
+
