@@ -250,4 +250,49 @@ p {
   height: 8px;
   background-color: #10b981;
   border-radius: 9999px;
+  animation: pulse-breathing 3000ms infinite ease-in-out;
 }
+
+/* --------------------------------------------------
+   ANIMATION KEYFRAMES (DESIGN_SYSTEM.MD SPEC)
+   -------------------------------------------------- */
+
+@keyframes pulse-breathing {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 400ms cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+.animate-float {
+  animation: float 4s infinite ease-in-out;
+}
+
