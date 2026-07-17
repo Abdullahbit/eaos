@@ -15,7 +15,7 @@ export default function Home() {
   const [showWizard, setShowWizard] = useState<boolean>(false);
   const [resultsData, setResultsData] = useState<{ leadId: string; results: ProgramResult[] } | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatus>({ is_syncing: false, latest_sync_time: null });
-  const [showHowItWorks, setShowHowItWorks] = useState<boolean>(false);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
 
   // Track landing page view event on initial mount
   useEffect(() => {
@@ -61,6 +61,17 @@ export default function Home() {
     }
   };
 
+  const toggleFaq = (index: number) => {
+    setActiveFaq(activeFaq === index ? null : index);
+  };
+
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <main style={styles.main}>
       {/* Navbar / Header */}
@@ -71,7 +82,7 @@ export default function Home() {
           </div>
           <div style={styles.navRight}>
             {syncStatus.is_syncing ? (
-              <span className="live-pulse-badge" style={{ backgroundColor: "rgba(16, 185, 129, 0.12)", color: "#10b981" }}>
+              <span className="live-pulse-badge">
                 <span className="pulse-dot"></span>
                 Syncing now
               </span>
@@ -88,9 +99,10 @@ export default function Home() {
       {/* Main Body */}
       <div className="container" style={styles.container}>
         {!resultsData ? (
-          <div style={styles.contentLayout} className="animate-fade-in">
-            {/* 1. ABOVE THE FOLD: Student Problem & Call to Action (Hero Card) */}
-            <section style={styles.heroSection} className="glass-card">
+          <div style={styles.pageFlow}>
+            
+            {/* SECTION 1: HERO & PRIMARY PROBLEM MATCH (Above the fold) */}
+            <section style={styles.heroSection} className="animate-fade-in">
               <h1 className="gradient-text" style={styles.heroTitle}>
                 Find Turkish university options that actually fit you.
               </h1>
@@ -115,89 +127,256 @@ export default function Home() {
                 <button
                   className="btn btn-secondary"
                   style={styles.heroCtaSecondary}
-                  onClick={() => setShowHowItWorks(!showHowItWorks)}
+                  onClick={() => scrollToSection("process-section")}
                   id="howItWorksBtn"
                 >
-                  {showHowItWorks ? "Hide Info" : "How Recommendations Work"}
+                  How Recommendations Work
                 </button>
               </div>
-
-              {showHowItWorks && (
-                <div style={styles.howItWorksCard} className="glass-card animate-fade-in">
-                  <h4 style={{ marginBottom: "8px", color: "var(--accent-teal)" }}>How Recommendations Work:</h4>
-                  <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-                    We match your budget limits, language preferences, and academic goals against our verified program database. 
-                    Recommended options are tailored for your profile without affiliate bias, and pricing is confirmed directly before application.
-                  </p>
-                </div>
-              )}
             </section>
 
-            {/* Two-Column Grid: Abdullah's Story & Supporting Proof */}
-            <div className="hero-grid" style={{ marginTop: "24px" }}>
-              {/* Left Column: Abdullah's Student Narrative (Story Letter Card) */}
-              <section style={styles.storyCard} className="glass-card">
-                <div style={styles.profileBadge}>
-                  <div style={styles.avatar} className="animate-float">👨‍💻</div>
-                  <div>
-                    <h4 style={styles.profileName}>Abdullah</h4>
-                    <p style={styles.profileTitle}>Senior Computer Engineering Student • Istanbul</p>
-                  </div>
-                </div>
+            {/* Dotted Route Line connecting narrative sections */}
+            <div className="route-line-container">
+              <div className="route-line" style={{ left: "50%", transform: "translateX(-50%)" }}></div>
 
-                <div style={styles.letterContent}>
-                  <p style={styles.letterParagraph}>
-                    Hi 👋 I’m Abdullah.
-                  </p>
-                  
-                  <p style={styles.letterParagraph}>
-                    I’m currently finishing my degree in Istanbul. When I first moved to Turkey as an international student, I made expensive mistakes because of outdated info and affiliate agencies.
-                  </p>
-
-                  <blockquote style={styles.quoteBlock}>
-                    “Let me help you avoid the mistakes I made.”
-                  </blockquote>
-
-                  <p style={styles.letterParagraph}>
-                    I built **Campus Insider** to provide future international students with direct access to verified program and fee options. I'm here to give you clear information so you can decide if studying in Turkey is the right choice for you.
-                  </p>
-                </div>
-              </section>
-
-              {/* Right Column: Database Coverage & Supporting Proof (Stats Card) */}
-              <section className="visual-showcase">
-                <div style={styles.showcaseCard} className="glass-card">
-                  <div style={styles.showcaseHeader}>
-                    <h3 className="gradient-text">Verified Database Coverage</h3>
-                    <p style={styles.showcaseSubtitle}>Regularly updated university details</p>
-                  </div>
-                  
-                  {/* Generic badges list */}
-                  <div style={styles.badgeList}>
-                    <div style={styles.coverageBadge}>🏢 39 universities</div>
-                    <div style={styles.coverageBadge}>📚 7,695 programs</div>
-                    <div style={styles.coverageBadge}>🎓 Associate to PhD options</div>
-                    <div style={styles.coverageBadge}>🗣️ English and Turkish programs</div>
-                    <div style={styles.coverageBadge}>📍 Multiple Turkish cities</div>
+              <div style={styles.routeContent}>
+                
+                {/* SECTION 2: THE PROBLEM (Three Trap Points) */}
+                <section style={styles.sectionBlock}>
+                  <div style={styles.sectionHeaderCentered}>
+                    <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 01 // ADMISSIONS CRITERIA</div>
+                    <h2>Three traps international students fall into</h2>
+                    <p style={{ maxWidth: "600px", margin: "8px auto 0 auto" }}>Traditional study agencies often optimize for commissions rather than student success. Watch out for these traps:</p>
                   </div>
 
-                  <hr style={{ borderColor: "var(--border)", margin: "16px 0" }} />
+                  <div style={styles.problemGrid}>
+                    <div className="glass-card" style={styles.problemCard}>
+                      <div style={styles.iconCircle}>💸</div>
+                      <h3 style={{ marginBottom: "8px" }}>The Hidden Cost Trap</h3>
+                      <p style={{ fontSize: "0.95rem" }}>Marketing only the first-year discount while hiding subsequently rising tuition rates or mandatory preparatory school language fees.</p>
+                    </div>
+                    <div className="glass-card" style={styles.problemCard}>
+                      <div style={styles.iconCircle}>🤝</div>
+                      <h3 style={{ marginBottom: "8px" }}>The Commission Trap</h3>
+                      <p style={{ fontSize: "0.95rem" }}>Directing students to low-tier private colleges that offer the highest commission payout to agents, regardless of academic fit.</p>
+                    </div>
+                    <div className="glass-card" style={styles.problemCard}>
+                      <div style={styles.iconCircle}>📊</div>
+                      <h3 style={{ marginBottom: "8px" }}>The Fake Ranking Trap</h3>
+                      <p style={{ fontSize: "0.95rem" }}>Publishing modified or legacy ranking tables to inflate the global recognition and accreditation values of certain departments.</p>
+                    </div>
+                  </div>
+                </section>
 
-                  {/* Supporting proof list */}
-                  <div style={styles.proofItem}>
-                    <span style={styles.proofTitle}>⭐ Free student assessment</span>
-                    <p style={styles.proofText}>No application entry charges or consultation fees.</p>
+                {/* SECTION 3: ABDULLAH'S NARRATIVE (Concise Story) */}
+                <section style={styles.sectionBlock}>
+                  <div className="hero-grid" style={{ alignItems: "center" }}>
+                    <div className="story-col">
+                      <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 02 // PERSONAL STORY</div>
+                      <h2 style={{ marginBottom: "16px" }}>"I want to help you avoid the mistakes I made."</h2>
+                      <p style={styles.narrativeParagraph}>
+                        Hi 👋 I’m Abdullah. I'm a senior Computer Engineering student living and studying in Istanbul.
+                      </p>
+                      <p style={styles.narrativeParagraph}>
+                        When I first moved to Turkey as an international student, I fell into expensive tuition traps because I trusted commercial sales agencies that hid true costs.
+                      </p>
+                      <p style={styles.narrativeParagraph}>
+                        I built <strong>Campus Insider</strong> to index verified university programs directly. I'm here to give you honest, current data so you can decide whether studying in Turkey is the right choice for you.
+                      </p>
+                    </div>
+                    <div className="glass-card" style={styles.letterCard}>
+                      <div style={styles.avatarLarge}>🎓</div>
+                      <h4 style={{ marginBottom: "4px" }}>Abdullah</h4>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", marginBottom: "16px" }}>Computer Engineering, Istanbul</p>
+                      <blockquote className="signature" style={{ fontSize: "1.1rem", lineHeight: "1.4" }}>
+                        “I will recommend the option I would choose myself if I were spending my own money.”
+                      </blockquote>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SECTION 4: SHOWING THE PRODUCT (Early Visual Previews) */}
+                <section style={styles.sectionBlock}>
+                  <div style={styles.sectionHeaderCentered}>
+                    <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 03 // PRODUCT PREVIEW</div>
+                    <h2>See what you will receive</h2>
+                    <p style={{ maxWidth: "600px", margin: "8px auto 0 auto" }}>Get matching programs and transparent tuition costs instantly without calling sales agents.</p>
                   </div>
 
-                  <div style={styles.proofItem}>
-                    <span style={styles.proofTitle}>🔍 Verified admissions data</span>
-                    <p style={styles.proofText}>
-                      Program and tuition information is regularly synchronized from our authorized admissions database. Availability and final pricing are confirmed before application.
-                    </p>
+                  <div className="hero-grid" style={{ gap: "24px", marginTop: "32px" }}>
+                    {/* Left: Questionnaire Preview */}
+                    <div className="glass-card" style={styles.previewCard}>
+                      <span style={styles.previewTag}>Interactive Assessment</span>
+                      <h4 style={{ margin: "8px 0" }}>What is your maximum annual budget?</h4>
+                      <div style={styles.previewOptions}>
+                        <div style={styles.previewOption}>$2,000 / year</div>
+                        <div style={{ ...styles.previewOption, borderColor: "var(--primary)", background: "var(--primary-glow)" }}>$4,000 / year ✓</div>
+                        <div style={styles.previewOption}>$6,000 / year</div>
+                      </div>
+                    </div>
+
+                    {/* Right: Recommendation Preview */}
+                    <div className="glass-card" style={styles.previewCard}>
+                      <span style={styles.previewTag}>Program Match</span>
+                      <h4 style={{ margin: "8px 0" }}>Computer Engineering (English)</h4>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-muted)" }}>Bahçeşehir University • Istanbul</p>
+                      <div style={styles.previewRationales}>
+                        <div style={styles.previewRationale}>✓ Fits your $4k budget limit</div>
+                        <div style={styles.previewRationale}>✓ 100% English medium instruction</div>
+                      </div>
+                      <div style={styles.previewPrice}>Cash Tuition: $4,500/yr</div>
+                    </div>
                   </div>
-                </div>
-              </section>
+                </section>
+
+                {/* SECTION 5: RECOMMENDATION PROCESS */}
+                <section style={styles.sectionBlock} id="process-section">
+                  <div style={styles.sectionHeaderCentered}>
+                    <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 04 // THE PROCESS</div>
+                    <h2>How recommendations work</h2>
+                    <p style={{ maxWidth: "600px", margin: "8px auto 0 auto" }}>A transparent matching process with verified admissions data.</p>
+                  </div>
+
+                  <div style={styles.processFlow}>
+                    <div style={styles.processStep}>
+                      <div style={styles.stepNum}>1</div>
+                      <h4 style={{ marginBottom: "4px" }}>Your Answers</h4>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Input your language, study level, and maximum budget limits.</p>
+                    </div>
+                    <div style={styles.processArrow}>➔</div>
+                    <div style={styles.processStep}>
+                      <div style={styles.stepNum}>2</div>
+                      <h4 style={{ marginBottom: "4px" }}>Filter Matching</h4>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>The engine filters through 7,695 options dynamically in real-time.</p>
+                    </div>
+                    <div style={styles.processArrow}>➔</div>
+                    <div style={styles.processStep}>
+                      <div style={styles.stepNum}>3</div>
+                      <h4 style={{ marginBottom: "4px" }}>Verified Data</h4>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Pricing structures are verified directly against authorized registers.</p>
+                    </div>
+                    <div style={styles.processArrow}>➔</div>
+                    <div style={styles.processStep}>
+                      <div style={styles.stepNum}>4</div>
+                      <h4 style={{ marginBottom: "4px" }}>Personal Options</h4>
+                      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Get a detailed comparison sheet showing total cash and installment costs.</p>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SECTION 6: WHY TRUST CAMPUS INSIDER */}
+                <section style={styles.sectionBlock}>
+                  <div className="hero-grid" style={{ gap: "40px" }}>
+                    <div>
+                      <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 05 // OUR PROMISE</div>
+                      <h2 style={{ marginBottom: "16px" }}>Our student-first design principles</h2>
+                      <p style={styles.narrativeParagraph}>
+                        We are not an education agency. We do not sell courses. We help you make the decision we would make if we were spending our own money.
+                      </p>
+                    </div>
+                    <div style={styles.trustGrid}>
+                      <div style={styles.trustBox}>
+                        <div style={{ fontWeight: 700, color: "var(--accent-teal)", marginBottom: "4px" }}>✓ Built by a student</div>
+                        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Created by Abdullah, a senior engineering student in Istanbul who went through this journey.</p>
+                      </div>
+                      <div style={styles.trustBox}>
+                        <div style={{ fontWeight: 700, color: "var(--accent-teal)", marginBottom: "4px" }}>✓ Verified admissions data</div>
+                        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Program details are regularly synchronized from our authorized database.</p>
+                      </div>
+                      <div style={styles.trustBox}>
+                        <div style={{ fontWeight: 700, color: "var(--accent-teal)", marginBottom: "4px" }}>✓ Transparent breakdowns</div>
+                        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Displays cash rates, semester installments, and mandatory prep school fees.</p>
+                      </div>
+                      <div style={styles.trustBox}>
+                        <div style={{ fontWeight: 700, color: "var(--accent-teal)", marginBottom: "4px" }}>✓ Free assessment</div>
+                        <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>No consultation fees or hidden sales commissions.</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SECTION 7: DATABASE COVERAGE */}
+                <section style={styles.sectionBlock}>
+                  <div style={styles.sectionHeaderCentered}>
+                    <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 06 // DATA SCOPE</div>
+                    <h2>Program database coverage</h2>
+                    <p style={{ maxWidth: "600px", margin: "8px auto 0 auto" }}>Verified options mapped across primary Turkish university networks.</p>
+                  </div>
+
+                  <div style={styles.statsGrid}>
+                    <div className="glass-card" style={styles.statBox}>
+                      <div style={styles.statNumBig}>39</div>
+                      <div style={styles.statLabel}>Universities</div>
+                    </div>
+                    <div className="glass-card" style={styles.statBox}>
+                      <div style={styles.statNumBig}>7,695</div>
+                      <div style={styles.statLabel}>Programs</div>
+                    </div>
+                    <div className="glass-card" style={styles.statBox}>
+                      <div style={styles.statNumBig}>Multi-Level</div>
+                      <div style={styles.statLabel}>Associate to PhD</div>
+                    </div>
+                    <div className="glass-card" style={styles.statBox}>
+                      <div style={styles.statNumBig}>Bilingual</div>
+                      <div style={styles.statLabel}>English & Turkish</div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* SECTION 8: FAQ & ANSWERS */}
+                <section style={styles.sectionBlock}>
+                  <div style={styles.sectionHeaderCentered}>
+                    <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 07 // FREQUENT QUESTIONS</div>
+                    <h2>Frequently asked questions</h2>
+                  </div>
+
+                  <div style={styles.faqList}>
+                    {[
+                      {
+                        q: "How is the program tuition data updated?",
+                        a: "We synchronize tuition rates, semester fees, and available course lists directly from authorized university portals on a recurring cycle to ensure pricing is current."
+                      },
+                      {
+                        q: "Does Campus Insider charge any consultation fees?",
+                        a: "No. The search service and matching assessment wizard are 100% free for students. We receive standard commission support directly from universities for processing admissions."
+                      },
+                      {
+                        q: "Are the displayed tuition numbers final?",
+                        a: "Tuition structures are preliminary. Final prices, exact discount terms, and specific program availability must be verified directly with the institution before submitting applications."
+                      }
+                    ].map((item, idx) => (
+                      <div key={idx} style={styles.faqItem} onClick={() => toggleFaq(idx)}>
+                        <div style={styles.faqHeader}>
+                          <span style={{ fontWeight: 600 }}>{item.q}</span>
+                          <span>{activeFaq === idx ? "−" : "+"}</span>
+                        </div>
+                        {activeFaq === idx && (
+                          <div style={styles.faqBody} className="animate-fade-in">
+                            <p style={{ fontSize: "0.95rem" }}>{item.a}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* SECTION 9: FINAL WAYPOINT CTA */}
+                <section style={{ ...styles.sectionBlock, textAlign: "center", border: "none" }}>
+                  <div className="typewriter-coords" style={{ marginBottom: "8px" }}>WAYPOINT 08 // START JOURNEY</div>
+                  <h2 style={{ fontSize: "2.2rem", marginBottom: "12px" }}>Find options matching your budget today</h2>
+                  <p style={{ color: "var(--text-secondary)", marginBottom: "24px" }}>Takes less than 3 minutes. Results are saved to your local session.</p>
+                  <button
+                    className="btn btn-primary"
+                    style={{ padding: "16px 40px", fontSize: "1.1rem" }}
+                    onClick={handleStartWizard}
+                  >
+                    Start My Free Assessment Now
+                  </button>
+                </section>
+
+              </div>
             </div>
+            
           </div>
         ) : (
           /* Results View */
@@ -234,7 +413,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   header: {
     borderBottom: "1px solid var(--border)",
     padding: "16px 0",
-    backgroundColor: "rgba(7, 10, 19, 0.6)",
+    backgroundColor: "rgba(249, 248, 246, 0.6)",
     backdropFilter: "blur(20px)",
     position: "sticky",
     top: 0,
@@ -252,7 +431,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     letterSpacing: "-0.01em",
   },
   logoAccent: {
-    color: "var(--accent-teal)",
+    color: "var(--primary)",
   },
   navRight: {
     display: "flex",
@@ -270,7 +449,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   syncStatusBadge: {
     fontSize: "0.75rem",
     color: "var(--text-secondary)",
-    backgroundColor: "rgba(255, 255, 255, 0.04)",
+    backgroundColor: "rgba(0, 0, 0, 0.03)",
     border: "1px solid var(--border)",
     padding: "4px 10px",
     borderRadius: "20px",
@@ -278,48 +457,47 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   container: {
     flex: 1,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingTop: "24px",
-    paddingBottom: "40px",
+    paddingTop: "40px",
+    paddingBottom: "80px",
   },
-  contentLayout: {
-    width: "100%",
+  pageFlow: {
     display: "flex",
     flexDirection: "column",
-    gap: "24px",
+    gap: "60px",
+    width: "100%",
   },
   heroSection: {
-    padding: "40px",
+    padding: "60px 40px",
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: "20px",
+    gap: "24px",
+    maxWidth: "1000px",
+    margin: "0 auto",
   },
   heroTitle: {
-    fontSize: "2.4rem",
-    lineHeight: "1.2",
-    fontWeight: "800",
-    maxWidth: "800px",
+    fontSize: "3.5rem",
+    lineHeight: "1.1",
+    fontWeight: 800,
+    maxWidth: "850px",
   },
   heroSubtitle: {
-    fontSize: "1.15rem",
+    fontSize: "1.2rem",
     color: "var(--text-secondary)",
-    maxWidth: "640px",
+    maxWidth: "680px",
   },
   disclaimerBox: {
-    backgroundColor: "rgba(245, 158, 11, 0.08)",
-    border: "1px solid rgba(245, 158, 11, 0.2)",
-    borderRadius: "8px",
-    padding: "12px 18px",
-    maxWidth: "700px",
+    backgroundColor: "rgba(238, 175, 42, 0.06)",
+    border: "1px solid rgba(238, 175, 42, 0.2)",
+    borderRadius: "12px",
+    padding: "12px 20px",
+    maxWidth: "750px",
     textAlign: "left",
   },
   disclaimerText: {
     fontSize: "0.85rem",
-    color: "var(--accent)",
+    color: "var(--accent-gold)",
     fontWeight: "500",
   },
   ctaRow: {
@@ -331,120 +509,208 @@ const styles: { [key: string]: React.CSSProperties } = {
     marginTop: "8px",
   },
   heroCtaPrimary: {
-    minWidth: "220px",
-    padding: "16px 32px",
+    minWidth: "240px",
+    padding: "16px 36px",
     fontSize: "1.05rem",
   },
   heroCtaSecondary: {
-    minWidth: "220px",
-    padding: "16px 32px",
+    minWidth: "240px",
+    padding: "16px 36px",
     fontSize: "1.05rem",
   },
-  howItWorksCard: {
-    marginTop: "16px",
-    padding: "20px",
-    textAlign: "left",
-    maxWidth: "600px",
-  },
-  storyCard: {
-    padding: "36px",
+  routeContent: {
     display: "flex",
     flexDirection: "column",
+    gap: "120px",
+    paddingTop: "60px",
+  },
+  sectionBlock: {
+    position: "relative",
+    zIndex: 1,
+    padding: "20px 0",
+    borderBottom: "1px solid var(--border)",
+    paddingBottom: "80px",
+  },
+  sectionHeaderCentered: {
+    textAlign: "center",
+    marginBottom: "40px",
+  },
+  problemGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
     gap: "24px",
   },
-  profileBadge: {
+  problemCard: {
+    padding: "32px 24px",
     display: "flex",
-    alignItems: "center",
-    gap: "16px",
-    borderBottom: "1px solid var(--border)",
-    paddingBottom: "20px",
+    flexDirection: "column",
+    gap: "12px",
   },
-  avatar: {
-    fontSize: "1.8rem",
-    backgroundColor: "var(--primary-glow)",
-    width: "56px",
-    height: "56px",
+  iconCircle: {
+    width: "48px",
+    height: "48px",
     borderRadius: "9999px",
+    background: "var(--primary-glow)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    border: "1px solid rgba(139, 92, 246, 0.3)",
+    fontSize: "1.4rem",
+    marginBottom: "8px",
   },
-  profileName: {
-    fontSize: "1.15rem",
-    fontWeight: "700",
+  narrativeParagraph: {
+    fontSize: "1.05rem",
+    color: "var(--text-secondary)",
+    lineHeight: "1.7",
+    marginBottom: "16px",
   },
-  profileTitle: {
-    fontSize: "0.85rem",
-    color: "var(--text-muted)",
-    marginTop: "2px",
+  letterCard: {
+    padding: "40px",
+    textAlign: "center",
+    maxWidth: "380px",
+    margin: "0 auto",
   },
-  letterContent: {
+  avatarLarge: {
+    fontSize: "3rem",
+    width: "80px",
+    height: "80px",
+    borderRadius: "9999px",
+    background: "var(--primary-glow)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 16px auto",
+    border: "1px solid var(--border)",
+  },
+  previewCard: {
+    padding: "30px",
     display: "flex",
     flexDirection: "column",
     gap: "16px",
   },
-  letterParagraph: {
-    fontSize: "1.02rem",
-    color: "var(--text-secondary)",
-    lineHeight: "1.6",
-  },
-  quoteBlock: {
-    borderLeft: "4px solid var(--accent)",
-    paddingLeft: "16px",
-    margin: "8px 0",
-    fontFamily: "Outfit, sans-serif",
-    fontSize: "1.15rem",
-    fontWeight: "600",
-    fontStyle: "italic",
-    color: "var(--text-primary)",
-    lineHeight: "1.5",
-  },
-  showcaseCard: {
-    padding: "28px",
-    display: "flex",
-    flexDirection: "column",
-    gap: "20px",
-  },
-  showcaseHeader: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "4px",
-  },
-  showcaseSubtitle: {
-    fontSize: "0.85rem",
+  previewTag: {
+    fontSize: "0.75rem",
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
     color: "var(--text-muted)",
+    fontWeight: 700,
   },
-  badgeList: {
+  previewOptions: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
-    marginTop: "8px",
+    gap: "8px",
   },
-  coverageBadge: {
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
+  previewOption: {
+    padding: "12px",
     border: "1px solid var(--border)",
     borderRadius: "8px",
-    padding: "10px 14px",
-    fontSize: "0.95rem",
-    fontWeight: "500",
-    color: "var(--text-secondary)",
+    fontSize: "0.9rem",
+    fontWeight: 500,
   },
-  proofItem: {
+  previewRationales: {
     display: "flex",
     flexDirection: "column",
-    gap: "4px",
-    marginBottom: "12px",
+    gap: "6px",
   },
-  proofTitle: {
-    fontSize: "0.95rem",
-    fontWeight: "700",
-    color: "var(--accent-teal)",
-  },
-  proofText: {
+  previewRationale: {
     fontSize: "0.85rem",
+    color: "var(--accent-teal)",
+    fontWeight: 600,
+  },
+  previewPrice: {
+    fontSize: "1.1rem",
+    fontWeight: 700,
+    color: "var(--text-charcoal)",
+    marginTop: "8px",
+    borderTop: "1px solid var(--border)",
+    paddingTop: "12px",
+  },
+  processFlow: {
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    gap: "24px",
+    marginTop: "24px",
+  },
+  processStep: {
+    flex: "1 1 200px",
+    textAlign: "center",
+  },
+  stepNum: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "9999px",
+    background: "var(--primary)",
+    color: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.1rem",
+    fontWeight: 700,
+    margin: "0 auto 12px auto",
+  },
+  processArrow: {
+    fontSize: "1.5rem",
+    color: "var(--text-muted)",
+    alignSelf: "center",
+    display: "none",
+  },
+  trustGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "24px",
+  },
+  trustBox: {
+    padding: "8px 0",
+  },
+  statsGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "24px",
+    marginTop: "24px",
+  },
+  statBox: {
+    padding: "30px 20px",
+    textAlign: "center",
+  },
+  statNumBig: {
+    fontSize: "2.5rem",
+    fontWeight: 800,
+    fontFamily: "Outfit, sans-serif",
+    color: "var(--primary)",
+    marginBottom: "6px",
+  },
+  statLabel: {
+    fontSize: "0.8rem",
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
     color: "var(--text-secondary)",
-    lineHeight: "1.4",
+    fontWeight: 700,
+  },
+  faqList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    maxWidth: "700px",
+    margin: "0 auto",
+  },
+  faqItem: {
+    background: "#fff",
+    border: "1px solid var(--border)",
+    borderRadius: "12px",
+    cursor: "pointer",
+    padding: "18px 24px",
+  },
+  faqHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  faqBody: {
+    marginTop: "12px",
+    borderTop: "1px solid var(--border)",
+    paddingTop: "12px",
+    color: "var(--text-secondary)",
   },
   footer: {
     padding: "24px",
@@ -452,6 +718,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderTop: "1px solid var(--border)",
     fontSize: "0.8rem",
     color: "var(--text-muted)",
+    backgroundColor: "var(--bg-secondary)",
   },
   privacyLink: {
     color: "var(--accent-teal)",
