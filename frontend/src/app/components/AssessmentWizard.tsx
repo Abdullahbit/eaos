@@ -39,6 +39,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
   const [consent, setConsent] = useState<boolean>(false);
   const [assessmentSessionId, setAssessmentSessionId] = useState<string>("");
   const [turnstileChecked, setTurnstileChecked] = useState<boolean>(false);
+  const [turnstileToken, setTurnstileToken] = useState<string>("");
 
   // Custom styling for active wizard steps
   const stepsList = [
@@ -92,6 +93,35 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
 
     trackEvent("assessment_started");
   }, []);
+
+  // Production Turnstile Widget Loader
+  useEffect(() => {
+    if (step === 6) {
+      const script = document.createElement("script");
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+
+      (window as any).onTurnstileSuccess = (token: string) => {
+        setTurnstileChecked(true);
+        setTurnstileToken(token);
+      };
+
+      (window as any).onTurnstileExpired = () => {
+        setTurnstileChecked(false);
+        setTurnstileToken("");
+      };
+
+      return () => {
+        try {
+          document.body.removeChild(script);
+        } catch (e) {}
+        delete (window as any).onTurnstileSuccess;
+        delete (window as any).onTurnstileExpired;
+      };
+    }
+  }, [step]);
 
   // Save changes to sessionStorage
   useEffect(() => {
@@ -245,7 +275,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
       preferred_language: preferredLanguage,
       max_budget: parseFloat(maxBudget),
       assessment_session_id: assessmentSessionId,
-      turnstile_token: "dev-bypass-token",
+      turnstile_token: turnstileToken,
       utm_source: getUtmParam("utm_source"),
       utm_medium: getUtmParam("utm_medium"),
       utm_campaign: getUtmParam("utm_campaign"),
@@ -457,20 +487,14 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
                 />
               </div>
 
-              {/* Cloudflare Turnstile Mock Widget */}
+              {/* Production Cloudflare Turnstile Widget */}
               <div style={styles.turnstileContainer}>
-                <div style={styles.turnstileBadge}>
-                  <input
-                    id="turnstileMockCheckbox"
-                    type="checkbox"
-                    checked={turnstileChecked}
-                    onChange={(e) => setTurnstileChecked(e.target.checked)}
-                    style={styles.turnstileCheckbox}
-                  />
-                  <label htmlFor="turnstileMockCheckbox" style={styles.turnstileLabel}>
-                    Verifying you are human (Secured by Cloudflare Turnstile)
-                  </label>
-                </div>
+                <div 
+                  className="cf-turnstile" 
+                  data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
+                  data-callback="onTurnstileSuccess"
+                  data-expired-callback="onTurnstileExpired"
+                ></div>
               </div>
 
               <div style={styles.consentCheckboxContainer}>
