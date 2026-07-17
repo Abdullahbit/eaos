@@ -134,6 +134,43 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
     sessionStorage.setItem("ci_consent", String(consent));
   }, [consent]);
 
+  // Keyboard Shortcuts (Design System Requirement)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onCancel();
+        return;
+      }
+      
+      // Numerical selectors for multi-choice steps
+      if (step === 1) {
+        if (e.key === "1") { setCountry("Turkey"); handleNext(); }
+      } else if (step === 2) {
+        const lvls = ["Associate", "Bachelor", "Master", "PhD"];
+        const idx = parseInt(e.key) - 1;
+        if (idx >= 0 && idx < lvls.length) {
+          setStudyLevel(lvls[idx]);
+          handleNext();
+        }
+      } else if (step === 4) {
+        const langs = ["English", "Turkish"];
+        const idx = parseInt(e.key) - 1;
+        if (idx >= 0 && idx < langs.length) {
+          setPreferredLanguage(langs[idx]);
+          handleNext();
+        }
+      } else if (step === 3 || step === 5) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          handleNext();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [step, country, studyLevel, intendedMajor, preferredLanguage, maxBudget]);
+
   const handleNext = () => {
     setErrorMsg(null);
     if (step === 3 && !intendedMajor.trim()) {
@@ -208,7 +245,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
       preferred_language: preferredLanguage,
       max_budget: parseFloat(maxBudget),
       assessment_session_id: assessmentSessionId,
-      turnstile_token: "dev-bypass-token", // bypass validated by backend
+      turnstile_token: "dev-bypass-token",
       utm_source: getUtmParam("utm_source"),
       utm_medium: getUtmParam("utm_medium"),
       utm_campaign: getUtmParam("utm_campaign"),
@@ -245,7 +282,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
         {/* Close Button */}
         <button style={styles.closeBtn} onClick={onCancel} aria-label="Close modal">×</button>
 
-        {/* Progress Bar */}
+        {/* Progress Bar & Waypoints timeline */}
         <div style={styles.progressContainer}>
           <div style={styles.progressTrack}>
             <div style={{ ...styles.progressBar, width: `${(step / 6) * 100}%` }} />
@@ -254,15 +291,32 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
             {stepsList.map((s) => (
               <span
                 key={s.num}
+                className="typewriter-coords"
                 style={{
                   ...styles.stepIndicatorItem,
                   color: step >= s.num ? "var(--primary)" : "var(--text-muted)",
                   fontWeight: step === s.num ? "700" : "400",
                 }}
               >
-                {s.label}
+                {s.num}. {s.label}
               </span>
             ))}
+          </div>
+        </div>
+
+        {/* Guided Conversation Avatars & Dialogue Bubble */}
+        <div style={styles.conversationHeader}>
+          <div style={styles.avatarMini}>👨‍💻</div>
+          <div style={styles.bubble}>
+            <span style={{ fontWeight: 700, color: "var(--accent-gold)", display: "block", fontSize: "0.8rem", textTransform: "uppercase" }}>
+              Abdullah
+            </span>
+            {step === 1 && "“Where would you like to study? I currently index verified programs in Turkey.”"}
+            {step === 2 && `“Excellent. What level of degree are we looking at for ${country}?”`}
+            {step === 3 && "“What major or subject field do you want to study? Be as specific as you like.”"}
+            {step === 4 && "“Got it. What is your preferred language of instruction for the program?”"}
+            {step === 5 && `“What is the maximum yearly tuition budget you can comfortably afford for a ${studyLevel} program?”`}
+            {step === 6 && "“Almost there! Enter your contact details and I will search the database for options matching your profile.”"}
           </div>
         </div>
 
@@ -271,17 +325,16 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
           {errorMsg && <div style={styles.errorBanner}>{errorMsg}</div>}
 
           {step === 1 && (
-            <div className="animate-fade-in">
-              <h2 style={styles.stepTitle}>Where would you like to study?</h2>
-              <p style={styles.stepSubtitle}>Istanbul offers universities with globally recognized degree programs.</p>
+            <div className="animate-fade-in" style={styles.stepBlock}>
+              <h2 style={styles.stepTitle}>Choose Country</h2>
               <div style={styles.optionsList}>
-                {["Turkey"].map((c) => (
+                {["Turkey"].map((c, idx) => (
                   <button
                     key={c}
                     onClick={() => { setCountry(c); handleNext(); }}
                     style={country === c ? styles.optionButtonActive : styles.optionButton}
                   >
-                    {c} 🇹🇷
+                    <span style={styles.optionKeyNum}>{idx + 1}</span> {c} 🇹🇷
                   </button>
                 ))}
               </div>
@@ -289,17 +342,16 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
           )}
 
           {step === 2 && (
-            <div className="animate-fade-in">
-              <h2 style={styles.stepTitle}>Select your desired study level</h2>
-              <p style={styles.stepSubtitle}>Which degree level are you aiming for?</p>
+            <div className="animate-fade-in" style={styles.stepBlock}>
+              <h2 style={styles.stepTitle}>Choose Study Level</h2>
               <div style={styles.optionsList}>
-                {["Associate", "Bachelor", "Master", "PhD"].map((lvl) => (
+                {["Associate", "Bachelor", "Master", "PhD"].map((lvl, idx) => (
                   <button
                     key={lvl}
                     onClick={() => { setStudyLevel(lvl); handleNext(); }}
                     style={studyLevel === lvl ? styles.optionButtonActive : styles.optionButton}
                   >
-                    {lvl} Degree
+                    <span style={styles.optionKeyNum}>{idx + 1}</span> {lvl} Degree
                   </button>
                 ))}
               </div>
@@ -307,9 +359,8 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
           )}
 
           {step === 3 && (
-            <div className="animate-fade-in">
-              <h2 style={styles.stepTitle}>What major do you intend to study?</h2>
-              <p style={styles.stepSubtitle}>Examples: Computer Engineering, Business Administration, Architecture.</p>
+            <div className="animate-fade-in" style={styles.stepBlock}>
+              <h2 style={styles.stepTitle}>Intended Major</h2>
               <div style={styles.inputContainer}>
                 <input
                   type="text"
@@ -320,22 +371,22 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
                   style={styles.textInput}
                   autoFocus
                 />
+                <span style={styles.fieldTip}>* Tip: Press Enter to submit. You can write broad areas like "Business" or "Engineering" if unsure.</span>
               </div>
             </div>
           )}
 
           {step === 4 && (
-            <div className="animate-fade-in">
-              <h2 style={styles.stepTitle}>Preferred instruction language</h2>
-              <p style={styles.stepSubtitle}>Most top-tier universities offer fully English-taught programs.</p>
+            <div className="animate-fade-in" style={styles.stepBlock}>
+              <h2 style={styles.stepTitle}>Preferred Instruction Language</h2>
               <div style={styles.optionsList}>
-                {["English", "Turkish"].map((lang) => (
+                {["English", "Turkish"].map((lang, idx) => (
                   <button
                     key={lang}
                     onClick={() => { setPreferredLanguage(lang); handleNext(); }}
                     style={preferredLanguage === lang ? styles.optionButtonActive : styles.optionButton}
                   >
-                    {lang}
+                    <span style={styles.optionKeyNum}>{idx + 1}</span> {lang} Instruction
                   </button>
                 ))}
               </div>
@@ -343,9 +394,8 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
           )}
 
           {step === 5 && (
-            <div className="animate-fade-in">
-              <h2 style={styles.stepTitle}>Maximum yearly tuition budget</h2>
-              <p style={styles.stepSubtitle}>Specify the maximum yearly tuition fee (in USD equivalent) you can afford.</p>
+            <div className="animate-fade-in" style={styles.stepBlock}>
+              <h2 style={styles.stepTitle}>Tuition Budget Constraint</h2>
               <div style={styles.inputContainer}>
                 <div style={styles.inputWithAddon}>
                   <span style={styles.inputAddon}>$</span>
@@ -360,17 +410,17 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
                   />
                   <span style={styles.inputAddon}>/ year</span>
                 </div>
+                <span style={styles.fieldTip}>* Tip: Enter in USD equivalent. Press Enter to submit.</span>
               </div>
             </div>
           )}
 
           {step === 6 && (
-            <form onSubmit={handleSubmit} className="animate-fade-in">
-              <h2 style={styles.stepTitle}>Almost there! Where should we send your matches?</h2>
-              <p style={styles.stepSubtitle}>Enter your contact details to calculate your matched programs.</p>
+            <form onSubmit={handleSubmit} className="animate-fade-in" style={styles.stepBlock}>
+              <h2 style={styles.stepTitle}>Contact Verification</h2>
               
               <div style={styles.formGroup}>
-                <label className="form-label" htmlFor="fullName">Full Name</label>
+                <label className="form-label" htmlFor="fullName">Full Name <span className="required-asterisk">*</span></label>
                 <input
                   id="fullName"
                   type="text"
@@ -383,7 +433,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
               </div>
 
               <div style={styles.formGroup}>
-                <label className="form-label" htmlFor="whatsapp">WhatsApp Number (with country code)</label>
+                <label className="form-label" htmlFor="whatsapp">WhatsApp Number (with country prefix) <span className="required-asterisk">*</span></label>
                 <input
                   id="whatsapp"
                   type="tel"
@@ -407,7 +457,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
                 />
               </div>
 
-              {/* Cloudflare Turnstile Mock widget */}
+              {/* Cloudflare Turnstile Mock Widget */}
               <div style={styles.turnstileContainer}>
                 <div style={styles.turnstileBadge}>
                   <input
@@ -482,12 +532,13 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   modal: {
     width: "100%",
-    maxWidth: "620px",
+    maxWidth: "600px",
     padding: "36px",
     position: "relative",
     display: "flex",
     flexDirection: "column",
     gap: "24px",
+    backgroundColor: "var(--bg-primary)", /* Light Paper Theme */
   },
   closeBtn: {
     position: "absolute",
@@ -509,70 +560,111 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   progressTrack: {
     width: "100%",
-    height: "6px",
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: "3px",
+    height: "4px",
+    backgroundColor: "var(--border)",
+    borderRadius: "2px",
     overflow: "hidden",
   },
   progressBar: {
     height: "100%",
-    background: "linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%)",
-    borderRadius: "3px",
-    transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    background: "var(--primary)",
+    borderRadius: "2px",
+    transition: "width 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
   },
   stepsIndicator: {
     display: "flex",
     justifyContent: "space-between",
     fontSize: "0.75rem",
-    color: "var(--text-muted)",
   },
   stepIndicatorItem: {
     transition: "color 0.3s ease",
   },
+  conversationHeader: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "16px",
+    padding: "16px",
+    background: "var(--bg-secondary)",
+    borderRadius: "12px",
+    border: "1px solid var(--border)",
+  },
+  avatarMini: {
+    fontSize: "1.8rem",
+    width: "40px",
+    height: "40px",
+    borderRadius: "9999px",
+    background: "var(--bg-primary)",
+    border: "1px solid var(--border)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bubble: {
+    flex: 1,
+    fontSize: "0.95rem",
+    lineHeight: "1.5",
+    color: "var(--text-charcoal)",
+  },
   contentBody: {
-    minHeight: "220px",
+    minHeight: "200px",
+  },
+  stepBlock: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
   },
   stepTitle: {
-    fontSize: "1.6rem",
-    marginBottom: "8px",
-    background: "linear-gradient(135deg, #ffffff 0%, var(--text-secondary) 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-  },
-  stepSubtitle: {
-    fontSize: "0.95rem",
-    color: "var(--text-secondary)",
-    marginBottom: "24px",
+    fontSize: "1.3rem",
+    fontWeight: "700",
+    color: "var(--text-charcoal)",
   },
   optionsList: {
     display: "flex",
     flexDirection: "column",
-    gap: "12px",
+    gap: "10px",
   },
   optionButton: {
     width: "100%",
-    padding: "16px 20px",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    padding: "14px 18px",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     border: "1px solid var(--border)",
     borderRadius: "var(--radius-sm)",
-    color: "var(--text-primary)",
+    color: "var(--text-charcoal)",
     textAlign: "left",
-    fontSize: "1rem",
+    fontSize: "0.95rem",
     fontWeight: "500",
     cursor: "pointer",
     transition: "all 0.2s ease",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
   },
   optionButtonActive: {
     width: "100%",
-    padding: "16px 20px",
+    padding: "14px 18px",
     backgroundColor: "var(--primary-glow)",
     border: "2px solid var(--primary)",
     borderRadius: "var(--radius-sm)",
-    color: "var(--text-primary)",
+    color: "var(--text-charcoal)",
     textAlign: "left",
-    fontSize: "1rem",
+    fontSize: "0.95rem",
     fontWeight: "600",
     cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
+  optionKeyNum: {
+    width: "20px",
+    height: "20px",
+    borderRadius: "4px",
+    background: "rgba(0,0,0,0.06)",
+    color: "var(--text-secondary)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "0.75rem",
+    fontWeight: 700,
   },
   inputContainer: {
     display: "flex",
@@ -583,17 +675,22 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "16px",
     fontSize: "1.1rem",
   },
+  fieldTip: {
+    fontSize: "0.75rem",
+    color: "var(--text-secondary)",
+    fontStyle: "italic",
+  },
   inputWithAddon: {
     display: "flex",
     alignItems: "center",
-    backgroundColor: "rgba(10, 14, 26, 0.6)",
+    backgroundColor: "rgba(255, 255, 255, 0.6)",
     border: "1px solid var(--border)",
     borderRadius: "var(--radius-sm)",
     overflow: "hidden",
   },
   inputAddon: {
     padding: "0 16px",
-    color: "var(--text-muted)",
+    color: "var(--text-secondary)",
     fontWeight: "600",
     fontSize: "1rem",
   },
@@ -605,12 +702,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: "100%",
   },
   formGroup: {
-    marginBottom: "18px",
+    marginBottom: "16px",
+    display: "flex",
+    flexDirection: "column",
   },
   turnstileContainer: {
-    marginBottom: "18px",
+    marginBottom: "16px",
     padding: "12px",
-    backgroundColor: "rgba(255, 255, 255, 0.01)",
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
     border: "1px solid var(--border)",
     borderRadius: "var(--radius-sm)",
   },
@@ -633,9 +732,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: "flex",
     alignItems: "flex-start",
     gap: "12px",
-    marginTop: "20px",
+    marginTop: "16px",
     padding: "14px",
-    backgroundColor: "rgba(255, 255, 255, 0.02)",
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
     borderRadius: "var(--radius-sm)",
     border: "1px dashed var(--border)",
   },
@@ -660,9 +759,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     paddingTop: "20px",
   },
   errorBanner: {
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    border: "1px solid var(--error)",
-    color: "#f87171",
+    backgroundColor: "rgba(239, 68, 68, 0.05)",
+    border: "1px solid #f87171",
+    color: "#b91c1c",
     padding: "12px 16px",
     borderRadius: "var(--radius-sm)",
     fontSize: "0.9rem",
