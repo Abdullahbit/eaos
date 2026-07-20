@@ -1,38 +1,36 @@
-# Task List - Campus Insider Frontend Redesign
+# Task List - Campus Insider Redesign V3 (The Istanbul Student Atlas)
 
-## Phase 1: Design Foundations & Primitives
-- `[x]` Update `globals.css` with Google Fonts (Outfit, Inter, Playfair Display)
-- `[x]` Define CSS variables for Light Paper, Dark Slate, Indigo, and Accent colors
-- `[x]` Define typography utilities, custom bullet icons, and signature styling
-- `[x]` Define layout primitives (asymmetric 12-column grid, route lines, typographic coordinates)
+## Phase 1: Safeguards & Rollback Setup
+- `[x]` Create rollback git branch `rollback/v2-stable`
+- `[x]` Create local backups (`.bak` files) of layout, wizard, results, and CSS files
+- `[x]` Commit rollback assets to Git history
+
+## Phase 2: Design Token & Core Styles
+- `[x]` Import Manrope, Sora, and Source Serif 4 Google Fonts
+- `[x]` Declare V3 editorial custom property color variables
+- `[x]` Remove background grid paper patterns and update heading families
 - `[x]` Compile and verify styling setup
 
-## Phase 2: Homepage Redesign
-- `[ ]` Implement Section 1: Hero & Primary Problem Match (Above the fold)
-- `[ ]` Implement Section 2: The Problem (Three Trap Points)
-- `[ ]` Implement Section 3: Abdullah’s Narrative (Story Letter Card)
-- `[ ]` Implement Section 4: Showing the Product (Early Visual Previews)
-- `[ ]` Implement Section 5: The Recommendation Waypoints (Visual Flow)
-- `[ ]` Implement Section 6: Why Trust Campus Insider (Value Guarantees)
-- `[ ]` Implement Section 7: Database Coverage (Stats Mappings)
-- `[ ]` Implement Section 8: FAQ & Answers (Accordion Toggles)
-- `[ ]` Implement Section 9: Final Waypoint CTA
-- `[ ]` Fetch sync status dynamically from `/api/sync/status`
+## Phase 3: Conversational Assessment Restructuring
+- `[x]` Transition modal wrapper to focused, borderless full-screen layouts
+- `[x]` Format options vertically as wide horizontal rows
+- `[x]` Retain numerical shortcut keys (`1`-`4`), session variables, and Turnstile integrations
+- `[x]` Verify horizontal slide page transitions
 
-## Phase 3: Assessment Conversation Flow
-- `[ ]` Refactor assessment wizard into a single-focus conversational format
-- `[ ]` Add step back navigation and sessionStorage recovery
-- `[ ]` Add keyboard shortcuts for option selection
+## Phase 4: Ranked Results Blueprint
+- `[x]` Restructure cards into a ranked hierarchy with dominant Rank 1 layout
+- `[x]` Format tuition price breakdowns into clean print-style horizontal tables
+- `[x]` Configure custom WhatsApp query redirection template with rank parameters
+- `[x]` Verify zero-match manual consult fallbacks
 
-## Phase 4: Recommendation Cards & Cost Breakdowns
-- `[ ]` Redesign results display as a verified matching blueprint
-- `[ ]` Format cost breakdowns (cash vs installment vs prep school fees)
-- `[ ]` Implement prefilled WhatsApp link generator and zero-match fallback
+## Phase 5: Homepage Visual Redesign
+- `[x]` Redesign minimal header with Live Sync badge parameters
+- `[x]` Implement asymmetrical hero layout with geographical coordinate elements
+- `[x]` Build oversized numbers section details list
+- `[x]` Style quotes, alternating principles grid rows, stats counter, and FAQ accordions
+- `[x]` Compile production bundle successfully
 
-## Phase 5: Motion & Micro-animations
-- `[ ]` Add snappier transitions for button hovers and selections
-- `[ ]` Add page-slide animations for wizard conversation steps
-
-## Phase 6: Accessibility, QA, & Verification
-- `[ ]` Run desktop and mobile E2E visual checks
-- `[ ]` Run TypeScript and ESLint validation checks
+## Phase 6: Release & Smoke Verification
+- `[x]` Run full production builds and test suites
+- `[x]` Verify environment parameters locally
+- `[x]` Complete E2E visual smoke checks
