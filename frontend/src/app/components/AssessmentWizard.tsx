@@ -308,39 +308,27 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
 
   return (
     <div style={styles.overlay}>
-      <div className="glass-card" style={styles.modal}>
-        {/* Close Button */}
-        <button style={styles.closeBtn} onClick={onCancel} aria-label="Close modal">×</button>
+      {/* Editorial Header */}
+      <header style={styles.header}>
+        <div style={styles.headerLogo} onClick={onCancel}>
+          🧭 CAMPUS INSIDER
+        </div>
+        <div style={styles.headerStatus}>
+          STEP {step} OF 6 // {stepsList[step - 1].label.toUpperCase()}
+        </div>
+      </header>
 
-        {/* Progress Bar & Waypoints timeline */}
-        <div style={styles.progressContainer}>
-          <div style={styles.progressTrack}>
-            <div style={{ ...styles.progressBar, width: `${(step / 6) * 100}%` }} />
-          </div>
-          <div style={styles.stepsIndicator}>
-            {stepsList.map((s) => (
-              <span
-                key={s.num}
-                className="typewriter-coords"
-                style={{
-                  ...styles.stepIndicatorItem,
-                  color: step >= s.num ? "var(--primary)" : "var(--text-muted)",
-                  fontWeight: step === s.num ? "700" : "400",
-                }}
-              >
-                {s.num}. {s.label}
-              </span>
-            ))}
-          </div>
+      <div style={styles.modal}>
+        {/* Progress Line */}
+        <div style={styles.progressTrack}>
+          <div style={{ ...styles.progressBar, width: `${(step / 6) * 100}%` }} />
         </div>
 
         {/* Guided Conversation Avatars & Dialogue Bubble */}
         <div style={styles.conversationHeader}>
           <div style={styles.avatarMini}>👨‍💻</div>
           <div style={styles.bubble}>
-            <span style={{ fontWeight: 700, color: "var(--accent-gold)", display: "block", fontSize: "0.8rem", textTransform: "uppercase" }}>
-              Abdullah
-            </span>
+            <span style={styles.avatarLabel}>Abdullah</span>
             {step === 1 && "“Where would you like to study? I currently index verified programs in Turkey.”"}
             {step === 2 && `“Excellent. What level of degree are we looking at for ${country}?”`}
             {step === 3 && "“What major or subject field do you want to study? Be as specific as you like.”"}
@@ -356,7 +344,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
 
           {step === 1 && (
             <div className="animate-fade-in" style={styles.stepBlock}>
-              <h2 style={styles.stepTitle}>Choose Country</h2>
+              <h2 style={styles.stepTitle}>Select Destination Country</h2>
               <div style={styles.optionsList}>
                 {["Turkey"].map((c, idx) => (
                   <button
@@ -373,7 +361,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
 
           {step === 2 && (
             <div className="animate-fade-in" style={styles.stepBlock}>
-              <h2 style={styles.stepTitle}>Choose Study Level</h2>
+              <h2 style={styles.stepTitle}>Select Study Level</h2>
               <div style={styles.optionsList}>
                 {["Associate", "Bachelor", "Master", "PhD"].map((lvl, idx) => (
                   <button
@@ -390,7 +378,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
 
           {step === 3 && (
             <div className="animate-fade-in" style={styles.stepBlock}>
-              <h2 style={styles.stepTitle}>Intended Major</h2>
+              <h2 style={styles.stepTitle}>Intended Study Major</h2>
               <div style={styles.inputContainer}>
                 <input
                   type="text"
@@ -401,7 +389,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
                   style={styles.textInput}
                   autoFocus
                 />
-                <span style={styles.fieldTip}>* Tip: Press Enter to submit. You can write broad areas like "Business" or "Engineering" if unsure.</span>
+                <span style={styles.fieldTip}>* Tip: Press Enter to save and continue.</span>
               </div>
             </div>
           )}
@@ -425,7 +413,7 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
 
           {step === 5 && (
             <div className="animate-fade-in" style={styles.stepBlock}>
-              <h2 style={styles.stepTitle}>Tuition Budget Constraint</h2>
+              <h2 style={styles.stepTitle}>Maximum Yearly Tuition</h2>
               <div style={styles.inputContainer}>
                 <div style={styles.inputWithAddon}>
                   <span style={styles.inputAddon}>$</span>
@@ -516,20 +504,20 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
         {/* Footer Navigation Buttons */}
         <div style={styles.modalFooter}>
           {step > 1 ? (
-            <button className="btn btn-secondary" onClick={handlePrev} disabled={loading}>
-              Back
+            <button className="btn btn-secondary" onClick={handlePrev} disabled={loading} style={styles.footerBtn}>
+              ← Go Back
             </button>
           ) : (
             <div />
           )}
 
           {step < 6 ? (
-            <button className="btn btn-primary" onClick={handleNext}>
-              Next Step
+            <button className="btn btn-primary" onClick={handleNext} style={styles.footerBtn}>
+              Continue →
             </button>
           ) : (
-            <button className="btn btn-primary" onClick={handleSubmit} id="submitWizardBtn" disabled={loading}>
-              {loading ? "Calculating..." : "See Results"}
+            <button className="btn btn-primary" onClick={handleSubmit} id="submitWizardBtn" disabled={loading} style={styles.footerBtn}>
+              {loading ? "Calculating..." : "See Results →"}
             </button>
           )}
         </div>
@@ -538,228 +526,219 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
   );
 }
 
-// In-line styles for maximum portability and fast loading without Tailwind
+// V3 Styling matching "The Istanbul Student Atlas" full-screen layout
 const styles: { [key: string]: React.CSSProperties } = {
   overlay: {
     position: "fixed",
     top: 0,
     left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(3, 7, 18, 0.8)",
-    backdropFilter: "blur(8px)",
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "var(--bg-secondary)", /* Warm Sand */
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "column",
     zIndex: 1000,
-    padding: "20px",
+    overflowY: "auto",
+    padding: "32px",
+  },
+  header: {
+    width: "100%",
+    maxWidth: "800px",
+    margin: "0 auto 24px auto",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottom: "2px solid var(--border)",
+    paddingBottom: "16px",
+  },
+  headerLogo: {
+    fontFamily: "'Sora', sans-serif",
+    fontWeight: "800",
+    fontSize: "1.1rem",
+    color: "var(--ink-navy)",
+    cursor: "pointer",
+    letterSpacing: "0.05em",
+  },
+  headerStatus: {
+    fontFamily: "monospace",
+    fontSize: "0.75rem",
+    color: "var(--muted-slate)",
+    letterSpacing: "0.08em",
   },
   modal: {
     width: "100%",
-    maxWidth: "600px",
-    padding: "36px",
-    position: "relative",
+    maxWidth: "800px",
+    margin: "0 auto",
     display: "flex",
     flexDirection: "column",
-    gap: "24px",
-    backgroundColor: "var(--bg-primary)", /* Light Paper Theme */
-  },
-  closeBtn: {
-    position: "absolute",
-    top: "20px",
-    right: "24px",
-    background: "transparent",
-    border: "none",
-    color: "var(--text-secondary)",
-    fontSize: "2rem",
-    cursor: "pointer",
-    lineHeight: "1",
-    transition: "color 0.2s ease",
-  },
-  progressContainer: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginTop: "12px",
+    gap: "32px",
+    paddingBottom: "60px",
   },
   progressTrack: {
     width: "100%",
-    height: "4px",
+    height: "2px",
     backgroundColor: "var(--border)",
-    borderRadius: "2px",
-    overflow: "hidden",
   },
   progressBar: {
     height: "100%",
     background: "var(--primary)",
-    borderRadius: "2px",
     transition: "width 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-  },
-  stepsIndicator: {
-    display: "flex",
-    justifyContent: "space-between",
-    fontSize: "0.75rem",
-  },
-  stepIndicatorItem: {
-    transition: "color 0.3s ease",
   },
   conversationHeader: {
     display: "flex",
     alignItems: "flex-start",
-    gap: "16px",
-    padding: "16px",
-    background: "var(--bg-secondary)",
-    borderRadius: "12px",
-    border: "1px solid var(--border)",
+    gap: "24px",
+    padding: "0",
   },
   avatarMini: {
-    fontSize: "1.8rem",
-    width: "40px",
-    height: "40px",
-    borderRadius: "9999px",
+    fontSize: "2rem",
+    width: "48px",
+    height: "48px",
+    borderRadius: "4px",
     background: "var(--bg-primary)",
-    border: "1px solid var(--border)",
+    border: "2px solid var(--ink-navy)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
   },
+  avatarLabel: {
+    fontWeight: 700,
+    color: "var(--accent-gold)",
+    display: "block",
+    fontSize: "0.75rem",
+    textTransform: "uppercase",
+    letterSpacing: "0.05em",
+    marginBottom: "8px",
+  },
   bubble: {
     flex: 1,
-    fontSize: "0.95rem",
-    lineHeight: "1.5",
-    color: "var(--text-charcoal)",
+    fontFamily: "'Source Serif 4', Georgia, serif",
+    fontSize: "1.8rem",
+    lineHeight: "1.4",
+    color: "var(--ink-navy)",
   },
   contentBody: {
-    minHeight: "200px",
+    minHeight: "220px",
   },
   stepBlock: {
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "20px",
   },
   stepTitle: {
-    fontSize: "1.3rem",
+    fontSize: "1.1rem",
     fontWeight: "700",
-    color: "var(--text-charcoal)",
+    textTransform: "uppercase",
+    letterSpacing: "0.08em",
+    color: "var(--muted-slate)",
   },
   optionsList: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
+    gap: "12px",
   },
   optionButton: {
     width: "100%",
-    padding: "14px 18px",
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius-sm)",
-    color: "var(--text-charcoal)",
+    padding: "18px 24px",
+    backgroundColor: "var(--bg-primary)", /* Soft White */
+    border: "1.5px solid var(--border)",
+    borderRadius: "4px",
+    color: "var(--ink-navy)",
     textAlign: "left",
-    fontSize: "0.95rem",
+    fontSize: "1.1rem",
     fontWeight: "500",
     cursor: "pointer",
-    transition: "all 0.2s ease",
+    transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "16px",
   },
   optionButtonActive: {
     width: "100%",
-    padding: "14px 18px",
-    backgroundColor: "var(--primary-glow)",
-    border: "2px solid var(--primary)",
-    borderRadius: "var(--radius-sm)",
-    color: "var(--text-charcoal)",
+    padding: "18px 24px",
+    backgroundColor: "var(--bg-primary)",
+    border: "2.5px solid var(--primary)", /* Cobalt Blue */
+    borderRadius: "4px",
+    color: "var(--ink-navy)",
     textAlign: "left",
-    fontSize: "0.95rem",
-    fontWeight: "600",
+    fontSize: "1.1rem",
+    fontWeight: "700",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
-    gap: "12px",
+    gap: "16px",
   },
   optionKeyNum: {
-    width: "20px",
-    height: "20px",
-    borderRadius: "4px",
+    width: "24px",
+    height: "24px",
+    borderRadius: "2px",
     background: "rgba(0,0,0,0.06)",
-    color: "var(--text-secondary)",
+    color: "var(--muted-slate)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "0.75rem",
+    fontSize: "0.8rem",
     fontWeight: 700,
   },
   inputContainer: {
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
+    gap: "12px",
   },
   textInput: {
-    padding: "16px",
-    fontSize: "1.1rem",
+    padding: "16px 0",
+    fontSize: "2rem",
+    border: "none",
+    borderBottom: "2px solid var(--ink-navy)",
+    borderRadius: "0",
+    backgroundColor: "transparent",
   },
   fieldTip: {
-    fontSize: "0.75rem",
-    color: "var(--text-secondary)",
+    fontSize: "0.8rem",
+    color: "var(--muted-slate)",
     fontStyle: "italic",
   },
   inputWithAddon: {
     display: "flex",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.6)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius-sm)",
-    overflow: "hidden",
+    borderBottom: "2px solid var(--ink-navy)",
+    backgroundColor: "transparent",
   },
   inputAddon: {
-    padding: "0 16px",
-    color: "var(--text-secondary)",
-    fontWeight: "600",
-    fontSize: "1rem",
+    padding: "0 12px 0 0",
+    color: "var(--ink-navy)",
+    fontWeight: "700",
+    fontSize: "2rem",
   },
   numberInput: {
     border: "none",
     backgroundColor: "transparent",
-    padding: "16px 8px",
-    fontSize: "1.1rem",
+    padding: "16px 0",
+    fontSize: "2rem",
     width: "100%",
+    borderRadius: "0",
   },
   formGroup: {
-    marginBottom: "16px",
+    marginBottom: "20px",
     display: "flex",
     flexDirection: "column",
   },
   turnstileContainer: {
-    marginBottom: "16px",
-    padding: "12px",
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-    border: "1px solid var(--border)",
-    borderRadius: "var(--radius-sm)",
-  },
-  turnstileBadge: {
-    display: "flex",
-    alignItems: "center",
-    gap: "10px",
-  },
-  turnstileCheckbox: {
-    width: "18px",
-    height: "18px",
-    cursor: "pointer",
-  },
-  turnstileLabel: {
-    fontSize: "0.82rem",
-    color: "var(--text-secondary)",
-    cursor: "pointer",
+    marginBottom: "20px",
+    padding: "16px",
+    backgroundColor: "var(--bg-primary)",
+    border: "1.5px solid var(--border)",
+    borderRadius: "4px",
+    display: "inline-flex",
   },
   consentCheckboxContainer: {
     display: "flex",
     alignItems: "flex-start",
     gap: "12px",
-    marginTop: "16px",
-    padding: "14px",
-    backgroundColor: "rgba(255, 255, 255, 0.4)",
-    borderRadius: "var(--radius-sm)",
+    marginTop: "20px",
+    padding: "16px",
+    backgroundColor: "rgba(0, 0, 0, 0.02)",
+    borderRadius: "4px",
     border: "1px dashed var(--border)",
   },
   checkbox: {
@@ -770,25 +749,31 @@ const styles: { [key: string]: React.CSSProperties } = {
     accentColor: "var(--primary)",
   },
   checkboxLabel: {
-    fontSize: "0.82rem",
-    color: "var(--text-secondary)",
+    fontSize: "0.85rem",
+    color: "var(--muted-slate)",
     cursor: "pointer",
-    lineHeight: "1.4",
+    lineHeight: "1.5",
   },
   modalFooter: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    borderTop: "1px solid var(--border)",
-    paddingTop: "20px",
+    borderTop: "2px solid var(--ink-navy)",
+    paddingTop: "24px",
+    marginTop: "24px",
+  },
+  footerBtn: {
+    borderRadius: "4px",
+    padding: "14px 28px",
+    fontSize: "1rem",
   },
   errorBanner: {
-    backgroundColor: "rgba(239, 68, 68, 0.05)",
-    border: "1px solid #f87171",
-    color: "#b91c1c",
-    padding: "12px 16px",
-    borderRadius: "var(--radius-sm)",
-    fontSize: "0.9rem",
-    marginBottom: "16px",
+    backgroundColor: "rgba(217, 108, 74, 0.05)",
+    border: "1px solid var(--terracotta)",
+    color: "var(--terracotta)",
+    padding: "14px 20px",
+    borderRadius: "4px",
+    fontSize: "0.95rem",
+    marginBottom: "20px",
   },
 };
