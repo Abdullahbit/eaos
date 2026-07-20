@@ -22,12 +22,12 @@ export default function ResultsDisplay({ leadId, results, onRestart }: ResultsDi
     }
   }, []);
 
-  const getWhatsAppLink = (progName?: string, uniName?: string) => {
+  const getWhatsAppLink = (progNameName?: string, uniName?: string, rankLabel?: string) => {
     const phone = "905000000000";
     let message = "";
     
-    if (progName && uniName) {
-      message = `Hi Abdullah! My name is ${fullName}. I did the assessment on Campus Insider and got matched with ${progName} at ${uniName}. I'd love to ask a few questions about life on campus and visa options.`;
+    if (progNameName && uniName && rankLabel) {
+      message = `Hi Abdullah! My name is ${fullName}. I completed the assessment and got matched with ${progNameName} at ${uniName} as my "${rankLabel}". Let's discuss visa application and campus life!`;
     } else {
       message = `Hi Abdullah! My name is ${fullName}. I just completed the assessment on Campus Insider (Reference: ${leadId}) but couldn't find an exact match within my budget. Let's look for other options!`;
     }
@@ -43,40 +43,60 @@ export default function ResultsDisplay({ leadId, results, onRestart }: ResultsDi
     <div className="animate-fade-in" style={styles.container}>
       {/* Title Header */}
       <div style={styles.header}>
-        <div className="typewriter-coords">WAYPOINT 08 // RECOMMENDATIONS</div>
+        <div style={styles.coordinateLabel}>WAYPOINT 08 // RECOMMENDATIONS</div>
         <h2 style={styles.title}>Your Study Blueprints</h2>
         <p style={styles.subtitle}>
-          Based on your criteria, I have identified the following matching programs. 
+          Based on your criteria, I have identified the following matching programs in Istanbul. 
           Your reference code is <span style={styles.refId}>{leadId}</span>.
         </p>
       </div>
 
-      {/* Program Results Grid */}
+      {/* Program Results Ranked List */}
       {results.length > 0 ? (
-        <div style={styles.resultsGrid}>
+        <div style={styles.resultsList}>
           {results.map((prog, idx) => {
-            // Calculate mock installment (usually tuition + ~10% for installment processing)
             const cash = prog.cash_fee !== undefined ? Number(prog.cash_fee) : 0;
             const installment = prog.discounted_fee !== undefined ? Number(prog.discounted_fee) : Math.round(cash * 1.1);
-            const prepFee = Math.round(cash * 0.95); // Prep fee estimate
+            const prepFee = Math.round(cash * 0.95);
+
+            // Set up Ranked Labels
+            let rankLabel = "Strong Alternative";
+            let isDominant = false;
+            let cardStyle = styles.cardAlternative;
+
+            if (idx === 0) {
+              rankLabel = "Best Overall Match";
+              isDominant = true;
+              cardStyle = styles.cardDominant;
+            } else if (idx === 1) {
+              rankLabel = "Best Budget Option";
+              cardStyle = styles.cardBudget;
+            }
 
             return (
-              <div key={idx} className="glass-card" style={styles.card}>
+              <div key={idx} style={cardStyle}>
                 <div style={styles.cardHeader}>
                   <div>
-                    <h3 style={styles.programName}>{prog.program_name}</h3>
-                    <span style={styles.uniSubtitle}>{prog.university_name} • {prog.city || "Turkey"}</span>
+                    <span style={isDominant ? styles.badgeDominant : styles.badgeNormal}>
+                      {rankLabel.toUpperCase()}
+                    </span>
+                    <h3 style={isDominant ? styles.programNameDominant : styles.programName}>
+                      {prog.program_name}
+                    </h3>
+                    <span style={styles.uniSubtitle}>
+                      {prog.university_name} • {prog.city || "Istanbul, Turkey"}
+                    </span>
                   </div>
                   <span style={styles.degreeTag}>{prog.degree}</span>
                 </div>
 
-                {/* Why This Matches Section (Teal frame) */}
+                {/* Why This Matches Section */}
                 <div style={styles.matchFrame}>
                   <div style={styles.matchTitle}>Why This Matches:</div>
                   <ul style={styles.matchList}>
-                    <li style={styles.matchItem}>✓ Taught fully in {prog.language} as preferred</li>
-                    <li style={styles.matchItem}>✓ Annual cash tuition is within your maximum limit</li>
-                    <li style={styles.matchItem}>✓ Academic criteria matches your requested level</li>
+                    <li style={styles.matchItem}>✓ Taught fully in {prog.language}</li>
+                    <li style={styles.matchItem}>✓ Annual tuition is within your maximum limit</li>
+                    <li style={styles.matchItem}>✓ Standard academic criteria met</li>
                   </ul>
                 </div>
 
@@ -116,11 +136,11 @@ export default function ResultsDisplay({ leadId, results, onRestart }: ResultsDi
                 {/* Card-Level WhatsApp Call to Action */}
                 <div style={{ marginTop: "12px" }}>
                   <a
-                    href={getWhatsAppLink(prog.program_name, prog.university_name)}
+                    href={getWhatsAppLink(prog.program_name, prog.university_name, rankLabel)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-secondary"
-                    style={styles.cardCta}
+                    style={isDominant ? styles.cardCtaDominant : styles.cardCta}
                     onClick={handleWhatsappClick}
                   >
                     💬 Ask Abdullah on WhatsApp
@@ -132,9 +152,9 @@ export default function ResultsDisplay({ leadId, results, onRestart }: ResultsDi
         </div>
       ) : (
         /* Zero Match Fallback Box */
-        <div className="glass-card" style={styles.noMatchCard}>
+        <div style={styles.noMatchCard}>
           <div style={styles.noMatchIcon}>🧭</div>
-          <h3 style={{ marginBottom: "12px" }}>No Exact Matches Found</h3>
+          <h3 style={{ marginBottom: "12px", fontFamily: "'Sora', sans-serif" }}>No Exact Matches Found</h3>
           <p style={styles.noMatchText}>
             I couldn’t find a program matching your exact combination. Turkey's tuition fees change frequently. 
             Let me know what you are looking for on WhatsApp, and I will manually check my database for you.
@@ -185,23 +205,28 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "24px 0",
   },
   header: {
-    textAlign: "center",
-    maxWidth: "600px",
-    margin: "0 auto 20px auto",
+    textAlign: "left",
+    maxWidth: "800px",
+    margin: "0 auto 20px 0",
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
     gap: "12px",
   },
+  coordinateLabel: {
+    fontFamily: "monospace",
+    fontSize: "0.75rem",
+    color: "var(--muted-slate)",
+    letterSpacing: "0.08em",
+  },
   title: {
-    fontSize: "2.4rem",
+    fontSize: "3rem",
     fontWeight: "800",
-    fontFamily: "Outfit, sans-serif",
+    fontFamily: "Sora, sans-serif",
   },
   subtitle: {
-    fontSize: "1rem",
+    fontSize: "1.1rem",
     color: "var(--text-secondary)",
-    lineHeight: "1.5",
+    lineHeight: "1.6",
   },
   refId: {
     color: "var(--primary)",
@@ -209,13 +234,35 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontFamily: "monospace",
     fontSize: "1.05rem",
   },
-  resultsGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-    gap: "28px",
+  resultsList: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "32px",
+    maxWidth: "800px",
   },
-  card: {
+  cardDominant: {
+    padding: "36px",
+    backgroundColor: "var(--warm-sand)", /* Dominant highlight color */
+    border: "2.5px solid var(--cobalt-blue)", /* Primary dominant border */
+    borderRadius: "4px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px",
+  },
+  cardBudget: {
     padding: "32px",
+    backgroundColor: "var(--soft-white)",
+    border: "1.5px solid var(--muted-slate)", /* Budget option border */
+    borderRadius: "4px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px",
+  },
+  cardAlternative: {
+    padding: "32px",
+    backgroundColor: "var(--soft-white)",
+    border: "1.5px solid var(--border)",
+    borderRadius: "4px",
     display: "flex",
     flexDirection: "column",
     gap: "24px",
@@ -226,13 +273,22 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "flex-start",
     gap: "12px",
   },
+  programNameDominant: {
+    fontSize: "1.8rem",
+    fontWeight: "800",
+    color: "var(--ink-navy)",
+    fontFamily: "Sora, sans-serif",
+    marginTop: "8px",
+  },
   programName: {
-    fontSize: "1.25rem",
+    fontSize: "1.4rem",
     fontWeight: "700",
-    color: "var(--text-charcoal)",
+    color: "var(--ink-navy)",
+    fontFamily: "Sora, sans-serif",
+    marginTop: "8px",
   },
   uniSubtitle: {
-    fontSize: "0.85rem",
+    fontSize: "0.9rem",
     color: "var(--text-secondary)",
     display: "block",
     marginTop: "4px",
@@ -243,19 +299,37 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: "var(--text-secondary)",
     fontSize: "0.75rem",
     padding: "4px 8px",
-    borderRadius: "6px",
+    borderRadius: "2px",
     fontWeight: "600",
   },
+  badgeDominant: {
+    backgroundColor: "var(--cobalt-blue)",
+    color: "#fff",
+    fontSize: "0.7rem",
+    fontWeight: "700",
+    padding: "4px 8px",
+    borderRadius: "2px",
+    letterSpacing: "0.08em",
+  },
+  badgeNormal: {
+    backgroundColor: "var(--ink-navy)",
+    color: "#fff",
+    fontSize: "0.7rem",
+    fontWeight: "700",
+    padding: "4px 8px",
+    borderRadius: "2px",
+    letterSpacing: "0.08em",
+  },
   matchFrame: {
-    backgroundColor: "rgba(187, 85, 38, 0.04)",
-    border: "1px solid var(--border)",
-    borderRadius: "12px",
+    backgroundColor: "rgba(217, 108, 74, 0.04)",
+    border: "1.5px solid var(--border)",
+    borderRadius: "4px",
     padding: "16px 20px",
   },
   matchTitle: {
     fontSize: "0.85rem",
     fontWeight: "700",
-    color: "var(--accent-teal)",
+    color: "var(--ink-navy)",
     marginBottom: "8px",
   },
   matchList: {
@@ -281,38 +355,50 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: "0.05em",
-    color: "var(--text-muted)",
+    color: "var(--muted-slate)",
   },
   costTable: {
     width: "100%",
     borderCollapse: "collapse",
   },
   tableTh: {
-    borderBottom: "1px solid var(--border)",
+    borderBottom: "2px solid var(--ink-navy)",
     padding: "8px 0",
     fontSize: "0.8rem",
-    color: "var(--text-muted)",
+    color: "var(--muted-slate)",
     textAlign: "left",
   },
   tableTd: {
     borderBottom: "1px solid var(--border)",
-    padding: "10px 0",
-    fontSize: "0.9rem",
-    color: "var(--text-charcoal)",
+    padding: "12px 0",
+    fontSize: "0.95rem",
+    color: "var(--ink-navy)",
+  },
+  cardCtaDominant: {
+    width: "100%",
+    padding: "16px",
+    fontSize: "1rem",
+    backgroundColor: "var(--ink-navy)",
+    color: "var(--soft-white)",
+    border: "none",
+    borderRadius: "4px",
   },
   cardCta: {
     width: "100%",
-    padding: "12px",
+    padding: "14px",
     fontSize: "0.95rem",
-    border: "1px solid var(--accent-teal)",
-    backgroundColor: "rgba(16, 185, 129, 0.04)",
-    color: "var(--accent-teal)",
+    border: "1.5px solid var(--ink-navy)",
+    backgroundColor: "transparent",
+    color: "var(--ink-navy)",
+    borderRadius: "4px",
   },
   noMatchCard: {
     padding: "48px 32px",
     textAlign: "center",
     maxWidth: "580px",
-    margin: "0 auto",
+    backgroundColor: "var(--soft-white)",
+    border: "1.5px solid var(--border)",
+    borderRadius: "4px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -329,27 +415,27 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   noMatchWhatsappBtn: {
     padding: "16px 32px",
-    background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    backgroundColor: "var(--sea-green)",
     color: "#fff",
-    boxShadow: "0 6px 20px rgba(16, 185, 129, 0.15)",
+    borderRadius: "4px",
+    boxShadow: "none",
   },
   disclaimerBox: {
     padding: "0",
     backgroundColor: "transparent",
     border: "none",
-    maxWidth: "700px",
-    margin: "0 auto",
-    textAlign: "center",
+    maxWidth: "800px",
+    textAlign: "left",
   },
   disclaimerText: {
     fontSize: "0.8rem",
-    color: "var(--text-secondary)",
+    color: "var(--muted-slate)",
     lineHeight: "1.4",
   },
   restartBtn: {
     background: "transparent",
     border: "none",
-    color: "var(--text-muted)",
+    color: "var(--muted-slate)",
     fontSize: "0.9rem",
     textDecoration: "underline",
     cursor: "pointer",
@@ -357,10 +443,9 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   privacyNote: {
     fontSize: "0.78rem",
-    color: "var(--text-muted)",
-    textAlign: "center",
-    maxWidth: "600px",
-    margin: "0 auto",
+    color: "var(--muted-slate)",
+    textAlign: "left",
+    maxWidth: "800px",
     lineHeight: "1.4",
   },
   privacyLink: {
