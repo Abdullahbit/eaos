@@ -1,32 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap');
 
 :root {
-  /* HSL Colors from DESIGN_SYSTEM.md */
-  --bg-primary: hsl(40, 20%, 97%); /* Light Paper */
-  --bg-secondary: #f3f0ea;
-  --bg-dark-slate: hsl(220, 25%, 9%); /* Dark Slate */
+  /* V3 Design Tokens - The Istanbul Student Atlas */
+  --ink-navy: #152238;
+  --cobalt-blue: #3157D5;
+  --warm-sand: #F3EEE5;
+  --soft-white: #FCFBF8;
+  --terracotta: #D96C4A;
+  --sea-green: #168B83;
+  --muted-slate: #667085;
+
+  /* Remapped Layout Variables */
+  --bg-primary: var(--soft-white);
+  --bg-secondary: var(--warm-sand);
+  --bg-dark-slate: var(--ink-navy);
   
-  --text-charcoal: hsl(215, 25%, 15%); /* Soft Black */
-  --text-secondary: hsl(215, 12%, 45%); /* Slate Gray */
+  --text-charcoal: var(--ink-navy);
+  --text-secondary: var(--muted-slate);
   --text-muted: #8e9bb0;
   
-  --primary: hsl(238, 70%, 54%); /* Primary Indigo */
-  --primary-hover: hsl(238, 70%, 46%);
-  --primary-glow: hsla(238, 70%, 54%, 0.08);
+  --primary: var(--cobalt-blue);
+  --primary-hover: #1f42be;
+  --primary-glow: rgba(49, 87, 213, 0.08);
   
-  --accent-gold: hsl(38, 92%, 50%); /* Warm Gold */
-  --accent-teal: hsl(187, 85%, 38%); /* Verified Teal */
-  --border: hsla(215, 25%, 15%, 0.08);
-  
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: hsla(215, 25%, 15%, 0.06);
-  --glass-shadow: 0 10px 40px 0 rgba(13, 18, 34, 0.06);
+  --accent-gold: var(--terracotta);
+  --accent-teal: var(--sea-green);
+  --border: rgba(21, 34, 56, 0.12);
   
   /* Layout Base */
-  --radius-sm: 8px;
-  --radius-md: 18px;
-  --radius-lg: 28px;
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
 }
 
 * {
@@ -45,25 +49,9 @@ body {
   min-height: 100vh;
 }
 
-/* Background grid paper effect */
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(to right, rgba(215, 205, 190, 0.15) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(215, 205, 190, 0.15) 1px, transparent 1px);
-  background-size: 24px 24px;
-  z-index: -2;
-  pointer-events: none;
-}
-
 /* Typography styles */
 h1, h2, h3, h4 {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Sora', 'Manrope', sans-serif;
   color: var(--text-charcoal);
   letter-spacing: -0.02em;
 }

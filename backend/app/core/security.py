@@ -17,6 +17,11 @@ def rate_limiter(request: Request, limit: int = 5, window_seconds: int = 60):
     Raises HTTP 429 if the request threshold is exceeded within the timeframe.
     """
     client_ip = request.client.host if request.client else "unknown"
+    
+    # Bypass rate limiting for localhost/local testing
+    if client_ip in ("127.0.0.1", "::1", "localhost"):
+        return
+
     now = time.time()
     
     # Filter out timestamps outside the window
