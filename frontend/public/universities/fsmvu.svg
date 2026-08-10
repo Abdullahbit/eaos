@@ -1,0 +1,5 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="46" stroke="#475569" stroke-width="4" fill="#F8FAFC"/>
+  <path d="M35 30H65V42C65 52 58 60 50 60C42 60 35 52 35 42V30Z" stroke="#475569" stroke-width="3" fill="none"/>
+  <text x="50" y="78" font-size="8" font-weight="800" fill="#475569" text-anchor="middle" font-family="sans-serif">FSMVÜ</text>
+</svg>
