@@ -37,7 +37,8 @@ export default function AdminLeads() {
     setLoading(true);
     setErrorMsg(null);
     try {
-      const response = await fetch("http://localhost:8000/api/admin/leads", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/api/admin/leads`, {
         headers: {
           "X-Admin-Token": authToken,
         },

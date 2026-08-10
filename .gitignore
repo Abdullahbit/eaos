@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.pytest_cache/
+.ruff_cache/
+
+# Next.js
+frontend/.next/
+frontend/node_modules/
+node_modules/
+
+# SQLite databases
+backend/eaos.db
+
+# Environment files
+backend/.env
+frontend/.env
+.env
+.env.local
+.env.*.local

@@ -86,6 +86,8 @@ async def verify_turnstile_token(token: str, client_ip: str | None = None) -> bo
             res_json = response.json()
             return bool(res_json.get("success"))
     except Exception:
-        # Fallback to True in dev/test mode if error occurs
-        return True
+        # Fallback to True only in dev/test mode with mock/test keys, otherwise fail closed
+        if not secret_key or secret_key in ("mock_secret", "1x000000000000000000000000000000AA") or secret_key.startswith("1x00000000000000000000"):
+            return True
+        return False
 

@@ -34,7 +34,8 @@ export async function trackEvent(eventName: string): Promise<void> {
   };
 
   try {
-    await fetch("http://localhost:8000/api/analytics/events", {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    await fetch(`${apiUrl}/api/analytics/events`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

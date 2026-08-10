@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = Field(default="INFO")
 
     # Launch Readiness & Beta Instrumentation
+    CORS_ORIGINS: str = Field(default="http://localhost:3000,http://127.0.0.1:3000")
     TELEGRAM_BOT_TOKEN: str = Field(default="")
     TELEGRAM_CHAT_ID: str = Field(default="")
     TURNSTILE_SECRET_KEY: str = Field(default="")

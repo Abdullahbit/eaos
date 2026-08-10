@@ -283,7 +283,8 @@ export default function AssessmentWizard({ onComplete, onCancel }: AssessmentWiz
     };
 
     try {
-      const response = await fetch("http://localhost:8000/api/leads", {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${apiUrl}/api/leads`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

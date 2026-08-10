@@ -22,7 +22,8 @@ export default function Home() {
     trackEvent("landing_view");
     
     // Fetch latest sync status from API
-    fetch("http://localhost:8000/api/sync/status")
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    fetch(`${apiUrl}/api/sync/status`)
       .then((res) => res.json())
       .then((data: SyncStatus) => {
         setSyncStatus(data);
