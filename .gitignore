@@ -1,5 +1,5 @@
 # Python
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 .venv/
@@ -8,18 +8,31 @@ ENV/
 env/
 .pytest_cache/
 .ruff_cache/
+*.egg-info/
+*.egg
+build/
+dist/
+.dist/
 
-# Next.js
+# Next.js & Frontend
 frontend/.next/
 frontend/node_modules/
 node_modules/
+.next/
+.netlify/
+.vercel/
 
 # SQLite databases
 backend/eaos.db
+*.db
+*.sqlite3
 
 # Environment files
-backend/.env
-frontend/.env
 .env
+.env.*
 .env.local
 .env.*.local
+backend/.env
+frontend/.env
+frontend/.env.local
+!*.env.example

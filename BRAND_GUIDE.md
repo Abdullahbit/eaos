@@ -9,7 +9,7 @@ This is the canonical brand and messaging guidelines document for **Campus Insid
 * **What it is**: Campus Insider is an independent, founder-led decision-support platform designed to help international students choose the right university and degree program in Turkey.
 * **The Problem it Solves**: Traditional education agencies act as sales brokers. They push students toward expensive universities to maximize commissions, hiding hidden costs (like prep school fees) and omitting the realities of student life in Turkey.
 * **Why it Exists**: To bring trust, transparency, and honesty to the international student journey in Turkey.
-* **What Makes it Different**: We are **not** an agency. We do not sell; we analyze, filter, and match based on strict student-provided budget and academic criteria.
+* **What Makes it Different**: Campus Insider is not presented as a traditional education agency. It is a student-first decision-support platform. When a student chooses to proceed, Campus Insider may also help facilitate the application process through its admissions partners.
 * **Desired Customer Perception**: A trusted older brother who has already navigated the exact path the student is starting.
 * **Brand Promise**: *"We will recommend the option we would choose ourselves if we were spending our own money."*
 
@@ -93,7 +93,7 @@ Use these exact quotes in hero copy, personal highlights, and CTAs:
    * Over 7,600+ programs tracked in our local database.
    * Real tuition data matched to student budget limits.
 4. **Trust Messages**:
-   * Independent verification of private and foundation universities.
+   * Program and tuition information is regularly synchronized from our admissions data sources and important details are confirmed before application.
 5. **Conversion CTAs**:
    * *"Find My Options"* (Main Funnel Entry).
 
